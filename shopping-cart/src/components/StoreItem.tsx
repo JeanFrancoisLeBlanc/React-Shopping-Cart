@@ -1,5 +1,7 @@
 import { Button, Card } from "react-bootstrap"
+import { useShoppingCart } from "../context/ShoppingCartContext"
 import { formatCurrency } from "../utilities/formatCurrency"
+
 
 type StoreItemProps = {
     id: number
@@ -8,9 +10,17 @@ type StoreItemProps = {
     imgUrl: string
 }
 
-export function StoreItem({ id, name, price, imgUrl }: 
-StoreItemProps) {
-    const quantity = 0
+export function StoreItem({ id, name, price, imgUrl }: StoreItemProps) {
+    const { 
+        getItemQuantity, 
+        increaseCartQuantity, 
+        decreaseCartQuantity, 
+        removeFromCart, } = useShoppingCart()
+    const quantity = getItemQuantity(id)
+    function remove(id: number): void {
+        throw new Error("Function not implemented.")
+    }
+
     return (
     <Card className="h-100">
         <Card.Img 
@@ -26,8 +36,27 @@ StoreItemProps) {
             </Card.Title>
             <div className="mt-auto">
                 {quantity === 0 ? (
-                    <Button> + Add To Cart </Button>
-                ) : null}
+                    <Button className="w-100" onClick={() => increaseCartQuantity(id)}> + Add To Cart </Button>
+                ) : ( <div 
+                    className="d-flex align-items-center flex-column" 
+                    style={{ gap: ".5rem"}}
+                    >
+                    
+                    <div 
+                    className="d-flex align-items-center justify-content-center" 
+                    style={{ gap: ".5rem"}}
+                    >
+                    <Button onClick={() => decreaseCartQuantity(id)}>-</Button>
+                    <div>
+                        <span className="fs-3">{quantity}</span> in cart
+                    </div>
+                    <Button onClick={() => increaseCartQuantity(id)}>+</Button>
+                </div>
+                <Button variant="danger" size="sm" onClick={() => remove (id)}>
+                    Remove
+                </Button>
+                </div>
+                 )}
             </div>
         </Card.Body>
     </Card>
